@@ -47,7 +47,9 @@ order by f.nombre;
 
 SELECT f.nombre, p.nombre, p.precio FROM producto p, fabricante f 
 WHERE f.codigo = p.codigo_fabricante
-AND p.precio LIMIT 1;
+AND p.precio 
+order by p.precio
+LIMIT 1;
 
 SELECT f.nombre, p.nombre FROM producto p, fabricante f
 WHERE f.codigo = p.codigo_fabricante 
@@ -115,7 +117,7 @@ and f.nombre = 'Asus'
  WHERE f.codigo = p.codigo_fabricante 
  and f.nombre = 'Asus');
 
-SELECT * FROM producto p, fabricante f
+SELECT f.nombre FROM producto p, fabricante f
 WHERE p.codigo_fabricante in (f.codigo);
 
 SELECT f.nombre FROM fabricante f, producto p   

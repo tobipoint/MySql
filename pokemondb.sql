@@ -5549,3 +5549,68 @@ begin
     
 end$$
 delimiter ;
+
+-- ------------------------------------------------------------------
+
+-- 1. Mostrar el nombre de todos los pokemon.
+select nombre from pokemon;
+-- 2. Mostrar los pokemon que pesen menos de 10k.
+select nombre from pokemon
+where peso < 10;
+-- 3. Mostrar los pokemon de tipo agua.
+select p.nombre,t.nombre as 'Tipo' from tipo t,pokemon p,pokemon_tipo pk
+where t.nombre = 'Agua' and pk.numero_pokedex = p.numero_pokedex and t.id_tipo = pk.id_tipo;
+-- 4. Mostrar los pokemon de tipo agua, fuego o tierra ordenados por tipo.
+select p.nombre, t.nombre as 'Tipo' from tipo t,pokemon p, pokemon_tipo pk
+where t.nombre in ('Agua','Fuego','Tierra') and t.id_tipo = pk.id_tipo 
+and pk.numero_pokedex = p.numero_pokedex
+order by t.nombre;
+-- 5. Mostrar los pokemon que son de tipo fuego y volador.
+select p.nombre,t.nombre as 'Tipo' from tipo t,pokemon p,pokemon_tipo pk
+where t.nombre in('Fuego','Volador') and pk.numero_pokedex = p.numero_pokedex and t.id_tipo = pk.id_tipo;
+-- 6. Mostrar los pokemon con una estadística base de ps mayor que 200.
+select p.nombre from pokemon p,estadisticas_base eb
+where eb.ps > 200 and p.numero_pokedex = eb.numero_pokedex;
+-- 7. Mostrar los datos (nombre, peso, altura) de la prevolución de Arbok.
+select p.nombre,p.peso,p.altura from pokemon p
+where p.nombre = 'Ekans';
+-- 8. Mostrar aquellos pokemon que evolucionan por intercambio.
+select p.nombre from pokemon p,forma_evolucion fe,pokemon_forma_evolucion pfe
+where fe.tipo_evolucion = 3 and pfe.id_forma_evolucion = fe.id_forma_evolucion 
+and pfe.numero_pokedex = p.numero_pokedex;
+-- 9. Mostrar el nombre del movimiento con más prioridad.
+select m.nombre,m.prioridad as 'Prioridad' from movimiento m
+where m.prioridad = (select max(m.prioridad)from movimiento m);
+-- 10. Mostrar el pokemon más pesado.
+select p.nombre,p.peso as 'Peso' from pokemon p
+where p.peso = (select max(p.peso) from pokemon p);
+-- 11. Mostrar el nombre y tipo del ataque con más potencia.
+select m.nombre,m.potencia as 'Potencia' from movimiento m
+where m.potencia = (select max(m.potencia) from movimiento m);
+-- 12. Mostrar el número de movimientos de cada tipo.
+select count(t.nombre)as 'Cantidad de Ataques',t.nombre as 'Tipo'from movimiento m,tipo t
+where m.id_tipo = t.id_tipo
+group by t.nombre;
+-- 13. Mostrar todos los movimientos que puedan envenenar.
+select m.nombre from movimiento m,movimiento_efecto_secundario me
+where me.id_efecto_secundario = 4 and me.id_movimiento = m.id_movimiento;
+-- 14. Mostrar todos los movimientos que causan daño, ordenados alfabéticamente por nombre.
+select nombre,potencia from movimiento
+where potencia > 0 order by nombre;
+-- 15. Mostrar todos los movimientos que aprende pikachu.
+select m.nombre from movimiento m,pokemon_movimiento_forma pm,pokemon p
+where p.nombre = 'Pikachu' 
+and p.numero_pokedex = pm.numero_pokedex 
+and m.id_movimiento = pm.id_movimiento;
+-- 16. Mostrar todos los movimientos que aprende pikachu por MT (tipo de aprendizaje).
+select distinct m.nombre
+from movimiento m, pokemon p, pokemon_movimiento_forma pmf, forma_aprendizaje fa, tipo_forma_aprendizaje tfa
+where p.numero_pokedex = pmf.numero_pokedex 
+and pmf.id_movimiento = m.id_movimiento
+and pmf.id_forma_aprendizaje = fa.id_forma_aprendizaje
+and fa.id_tipo_aprendizaje = tfa.id_tipo_aprendizaje
+and lower(tfa.tipo_aprendizaje) = 'mt'
+and lower(p.nombre) = 'pikachu';
+
+
+
